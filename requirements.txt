@@ -5,3 +5,4 @@ jsonschema-specifications==2023.7.1
 fastjsonschema==2.17.1
 python-json-logger==2.0.7
 Flask==3.0.0
+gunicorn
