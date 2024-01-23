@@ -1,8 +1,9 @@
-json5==0.9.14
-jsonpointer==2.3
-jsonschema==4.19.1
-jsonschema-specifications==2023.7.1
-fastjsonschema==2.17.1
-python-json-logger==2.0.7
-Flask==3.0.0
+json5
+jsonpointer
+jsonschema
+jsonschema-specifications
+fastjsonschema
+python-json-logger
+Flask
 gunicorn
+pymysql
