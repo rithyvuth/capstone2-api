@@ -4,7 +4,7 @@ import my_db
 
 app = Flask(__name__)
 
-text = open('text.txt', 'r', encoding='UTF-8').read()
+# text = open('text.txt', 'r', encoding='UTF-8').read()
 
 def from_txt(text_file):
     text = open(text_file, 'r', encoding='UTF-8').read()
