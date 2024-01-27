@@ -50,3 +50,12 @@ def status_to_free():
     conn.commit()
     cusor.close()
     return cusor.lastrowid
+
+def test_get_text():
+    cusor = conn.cursor()
+    sql = "SELECT id, text, status FROM texts ORDER BY id ASC LIMIT 1"
+    cusor.execute(sql)
+    result = cusor.fetchone()
+    cusor.close()
+    
+    return result

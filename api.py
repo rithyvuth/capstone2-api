@@ -7,8 +7,13 @@ app = Flask(__name__)
 # text = open('text.txt', 'r', encoding='UTF-8').read()
 
 def from_txt(text_file):
-    text = open(text_file, 'r', encoding='UTF-8').read()
+    # text = open(text_file, 'r', encoding='UTF-8').read()
+    text = text_file
     text = text.replace('\n', ' ')
+    text = text.replace('\r', '')
+    text = text.replace('\t', '')
+    text = text.replace('៕', '។')
+    text = text.replace('។។', '។')
     text = text.replace(' ', '')
     tests = text.split('។')
     return tests
@@ -18,13 +23,28 @@ def from_txt(text_file):
 def index():
     return render_template('index.html')
 
-@app.route('/add_text', methods=['GET', 'POST'])
+@app.route('/add_text', methods=['GET'])
 def add_text():
-    if request.method == 'POST':
-        text = request.form['text']
-        my_db.insert(text)
-        return jsonify({'status': 'ok'})
     return render_template('add_text.html')
+
+@app.route('/add_text', methods=['POST'])
+def add_text_post():
+    # return jsonify({'text': 'true'})
+    file = request.files['text_file']
+    if file and file.filename.endswith('.txt'):
+        # Read the content of the text file
+        file_content = file.read().decode('utf-8')
+
+        # Process the file content (you can add your logic here)
+        # For now, just print the content
+        return jsonify({'text': from_txt(file_content)})
+
+        # Save the file to a folder (you may want to check for secure filename)
+    
+    return render_template('add_text.html', message='បានបញ្ចូលប្រភេទអត្ថបទជាថ្មីបានជោគជ័យ')
+    # text = request.form['text']
+    # return jsonify({'text': text})
+
 # START API
 @app.route('/get_text', methods=['GET'])
 def get_text():
@@ -48,6 +68,11 @@ def get_all_texts():
     data = my_db.get_all_texts()
     return jsonify({'data': data})
 
+
+@app.route('/test_get_text', methods=['GET'])
+def test_get_text():
+    
+    return jsonify({'text': my_db.test_get_text()[1], 'id': my_db.test_get_text()[0]})
 
 if __name__ == '__main__':
    app.run()
