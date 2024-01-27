@@ -1,6 +1,8 @@
 import json
 from flask import Flask, jsonify, request, render_template
 import my_db
+import khmernltk
+import text_normalization
 
 app = Flask(__name__)
 
