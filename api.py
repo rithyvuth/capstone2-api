@@ -46,11 +46,19 @@ def add_text_post():
 
         return render_template('add_text.html', message='ការបញ្ចូលបានជោគជ័យ')
 
-        # Save the file to a folder (you may want to check for secure filename)
     
     return render_template('add_text.html', message='ការបញ្ចូលបរាជ័យ')
-    # text = request.form['text']
-    # return jsonify({'text': text})
+
+@app.route('/text_normalize', methods=['GET']) 
+def text_normalize():
+    return render_template('text_normalization.html')  
+
+@app.route('/text_normalize', methods=['POST'])
+def text_normalize_post():
+    text = request.form['text']
+    text = text_normalization.text_normalize(text)
+    return jsonify({'text': text})
+
 
 # START API
 @app.route('/get_text', methods=['GET'])

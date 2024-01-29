@@ -3,7 +3,8 @@ import re
 import unicodedata
 import khmernltk
 
-from text_normalization_assets.number_to_khmer_text import number_to_khmer_text
+from text_normalization_assets.number_to_khmer_text import number_to_khmer_text, have_khmer_number
+from text_normalization_assets.english_to_khmer import english_to_khmer
 from text_normalization_assets.norm_config import norm_config
 
 
@@ -62,13 +63,24 @@ def text_normalize(text):
 
     # Remove spaces
     normalized_text = re.sub(r"\s+", "", normalized_text).strip()
-
+    
     normalized_text = khmernltk.word_tokenize(normalized_text)
     for text in normalized_text:
         if text.isdigit():
-            normalized_text[normalized_text.index(text)] = number_to_khmer_text(int(text))
+            normalized_text[normalized_text.index(text)] = number_to_khmer_text(text)
         elif text == 'ៗ':
             normalized_text[normalized_text.index(text)] = normalized_text[normalized_text.index(text) - 1]
+        elif text.isalpha():
+            normalized_text[normalized_text.index(text)] = english_to_khmer(text)
+        elif have_khmer_number(text):
+            tmp = ''
+            for letter in text:
+                if have_khmer_number(letter):
+                    tmp += number_to_khmer_text(letter)
+                else:
+                    tmp += letter
+            normalized_text[normalized_text.index(text)] = tmp
+                    
         elif text == '':
             continue
     

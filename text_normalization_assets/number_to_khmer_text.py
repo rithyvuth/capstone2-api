@@ -22,6 +22,7 @@ def numtokhtext(number):
     khmer_hundred_thousands = ['មួយសែន', 'ពីរសែន', 'បីសែន', 'បួនសែន', 'ប្រាំសែន', 'ប្រាំមួយសែន', 'ប្រាំពីរសែន', 'ប្រាំបីសែន', 'ប្រាំបួនសែន']
     khmer_millions = ['មួយលាន', 'ពីរលាន', 'បីលាន', 'បួនលាន', 'ប្រាំលាន', 'ប្រាំមួយលាន', 'ប្រាំពីរលាន', 'ប្រាំបីលាន', 'ប្រាំបួនលាន']
     text = ''
+    number = kh_num_to_num(number)
     length = len(str(number))
     if length <= 9:
         while number > 0:
@@ -80,3 +81,10 @@ def kh_num_to_num(number):
         else:
             return ''
     return int(new_number)
+
+def have_khmer_number(text):
+    khmer_units = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩']
+    for num in text:
+        if num in khmer_units:
+            return True
+    return False
