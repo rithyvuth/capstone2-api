@@ -5,6 +5,8 @@ import khmernltk
 import text_normalization
 import os
 
+from dotenv import load_dotenv
+
 app = Flask(__name__)
 
 # text = open('text.txt', 'r', encoding='UTF-8').read()
@@ -31,23 +33,24 @@ def add_text_post():
     if file and file.filename.endswith('.txt'):
         # Read the content of the text file
         file_content = file.read().decode('utf-8')
-        if not os.path.exists('upload'):
-            os.mkdir('upload')
-        if not os.path.exists('upload/raw'):
-            os.mkdir('upload/raw')
-        if not os.path.exists('upload/normalized'):
-            os.mkdir('upload/normalized')            
-        open('upload/raw/' + file.filename, 'w', encoding='UTF-8').write(file_content)
+        baseRoot = os.getenv('BASE_ROOT')
+        if not os.path.exists(os.path.join(baseRoot, 'upload')):
+            os.mkdir(os.path.join(baseRoot, 'upload'))
+        if not os.path.exists(os.path.join(baseRoot, 'upload/raw')):
+            os.mkdir(os.path.join(baseRoot, 'upload/raw'))
+        if not os.path.exists(os.path.join(baseRoot, 'upload/normalized')):
+            os.mkdir(os.path.join(baseRoot, 'upload/normalized'))           
+        open(os.path.join(baseRoot, 'upload/raw/') + file.filename, 'w', encoding='UTF-8').write(file_content)
         
         texts = from_txt(file_content)
-        open('upload/normalized/' + file.filename, 'w', encoding='UTF-8').write('\n'.join(texts))
+        open(os.path.join(baseRoot, 'upload/normalized/') + file.filename, 'w', encoding='UTF-8').write('\n'.join(texts))
         for text in texts:
             my_db.insert(text, file.filename)
 
-        return render_template('add_text.html', message='ការបញ្ចូលបានជោគជ័យ')
+        return render_template('add_text.html', message='ការបញ្ចូលបានជោគជ័យ', status='primary')
 
     
-    return render_template('add_text.html', message='ការបញ្ចូលបរាជ័យ')
+    return render_template('add_text.html', message='ការបញ្ចូលបរាជ័យ', status='danger')
 
 @app.route('/text_normalize', methods=['GET']) 
 def text_normalize():

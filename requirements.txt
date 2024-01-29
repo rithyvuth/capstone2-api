@@ -7,3 +7,6 @@ python-json-logger
 Flask
 gunicorn
 pymysql
+khmer-nltk
+pandas
+python-dotenv
