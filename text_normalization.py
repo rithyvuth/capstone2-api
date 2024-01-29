@@ -3,7 +3,7 @@ import re
 import unicodedata
 import khmernltk
 
-from norm_config import norm_config
+from text_normalization.norm_config import norm_config
 
 
 def text_normalize(text):
