@@ -34,7 +34,7 @@ def add_text_post():
     if file and file.filename.endswith('.txt'):
         # Read the content of the text file
         file_content = file.read().decode('utf-8')
-        baseRoot = os.getenv('BASE_ROOT')
+        baseRoot = os.getenv('BASE_ROOT', '/var/www/api/')
         if not os.path.exists(os.path.join(baseRoot, 'upload')):
             os.mkdir(os.path.join(baseRoot, 'upload'))
         if not os.path.exists(os.path.join(baseRoot, 'upload/raw')):
