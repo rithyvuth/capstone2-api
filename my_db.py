@@ -2,11 +2,17 @@ import pymysql
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
+
+db_host = os.getenv("DB_HOST", 'localhost')
+db_user = os.getenv("DB_USER", 'root')
+db_password = os.getenv("DB_PASSWORD", 'root')
+db_database = os.getenv("DB_DATABASE", 'tts_db')
 conn = pymysql.connect(
-    host=os.getenv('DB_HOST'),
-    user=os.getenv('DB_USER'),
-    password=os.getenv('DB_PASSWORD'),
-    database=os.getenv('DB_DATABASE'),
+    host=db_host,
+    user=db_user,
+    password=db_password,
+    database=db_database,
 )
 
 def get_all_texts():
