@@ -10,6 +10,15 @@
 <body>
     <h1 class="">សួរស្តីអ្នកទាំងអស់គ្នា</h1>
     <div class="text-center">
+        <div
+            class="alert alert-primary"
+            role="alert"
+        >
+            <p class="mb-0">{{message}}</p>
+        </div>
+        
+
+        </div>
         <form action="/add_text" method="POST" enctype="multipart/form-data">
             <input type="file" name="text_file" accept=".txt" id="text_file">
             <textarea name="text" id="text" cols="30" rows="10"></textarea>

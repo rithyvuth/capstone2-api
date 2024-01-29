@@ -69,6 +69,8 @@ def text_normalize(text):
             normalized_text[normalized_text.index(text)] = number_to_khmer_text(int(text))
         elif text == 'ៗ':
             normalized_text[normalized_text.index(text)] = normalized_text[normalized_text.index(text) - 1]
+        elif text == '':
+            continue
     
     normalized_text = ''.join(normalized_text)
 

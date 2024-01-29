@@ -12,7 +12,7 @@ app = Flask(__name__)
 def from_txt(text_file):
     # text = open(text_file, 'r', encoding='UTF-8').read()
     text = text_file.split('។')
-    text = [text_normalization.text_normalize(t) for t in text]
+    text = [text_normalization.text_normalize(t) for t in text if t != None or t != '']
     return text
 
 
@@ -35,13 +35,20 @@ def add_text_post():
             os.mkdir('upload')
         if not os.path.exists('upload/raw'):
             os.mkdir('upload/raw')
-            
+        if not os.path.exists('upload/normalized'):
+            os.mkdir('upload/normalized')            
         open('upload/raw/' + file.filename, 'w', encoding='UTF-8').write(file_content)
-        return jsonify({'text': from_txt(file_content)})
+        
+        texts = from_txt(file_content)
+        open('upload/normalized/' + file.filename, 'w', encoding='UTF-8').write('\n'.join(texts))
+        for text in texts:
+            my_db.insert(text, file.filename)
+
+        return render_template('add_text.html', message='ការបញ្ចូលបានជោគជ័យ')
 
         # Save the file to a folder (you may want to check for secure filename)
     
-    return render_template('add_text.html', message='បានបញ្ចូលប្រភេទអត្ថបទជាថ្មីបានជោគជ័យ')
+    return render_template('add_text.html', message='ការបញ្ចូលបរាជ័យ')
     # text = request.form['text']
     # return jsonify({'text': text})
 
@@ -58,9 +65,11 @@ def set_free():
     my_db.status_to_free()
     return jsonify({'status': 'ok'})
 
-@app.route('/saved_text/<id>', methods=['POST'])
+@app.route('/saved_text', methods=['POST'])
 def saved_text(id):
-    my_db.update_status(id, 'saved')
+    id = request.form['id']
+    wav_name = request.form['name']
+    my_db.update_status(id, 'saved', wav_name)
     return jsonify({'status': 'ok'})
 
 @app.route('/get_all_texts', methods=['GET'])

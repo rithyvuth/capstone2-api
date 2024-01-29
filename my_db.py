@@ -15,10 +15,22 @@ def get_all_texts():
     cusor.close()
     return result
 
-def insert(text):
+def findText(text):# return true or false
     cusor = conn.cursor()
-    sql = "INSERT INTO texts (text, status) VALUES (%s, 'free')"
-    cusor.execute(sql, text)
+    sql = "SELECT * FROM texts WHERE text = %s"
+    cusor.execute(sql, (text))
+    result = cusor.fetchone()
+    cusor.close()
+    if result is None:
+        return False
+    return True
+
+def insert(text, filename=None):
+    if text == '' or findText(text):
+        return None
+    cusor = conn.cursor()
+    sql = "INSERT INTO texts (text, status, from_file) VALUES (%s, 'free', %s)"
+    cusor.execute(sql, (text, filename))
     conn.commit()
     cusor.close()
     return cusor.lastrowid
@@ -35,10 +47,10 @@ def get_text():
     update_status(result[0], 'busy')
     return result
 
-def update_status(id, new_status):
+def update_status(id, new_status, filename = None):
     cusor = conn.cursor()
-    sql = "UPDATE texts SET status = %s WHERE id = %s"
-    cusor.execute(sql, (new_status, id))
+    sql = "UPDATE texts SET status = %s, wav_name = %s WHERE id = %s"
+    cusor.execute(sql, (new_status, filename, id))
     conn.commit()
     cusor.close()
     return cusor.lastrowid
