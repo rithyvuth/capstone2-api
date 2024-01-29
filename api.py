@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, render_template
 import my_db
 import khmernltk
 import text_normalization
+import os
 
 app = Flask(__name__)
 
@@ -10,15 +11,9 @@ app = Flask(__name__)
 
 def from_txt(text_file):
     # text = open(text_file, 'r', encoding='UTF-8').read()
-    text = text_file
-    text = text.replace('\n', ' ')
-    text = text.replace('\r', '')
-    text = text.replace('\t', '')
-    text = text.replace('៕', '។')
-    text = text.replace('។។', '។')
-    text = text.replace(' ', '')
-    tests = text.split('។')
-    return tests
+    text = text_file.split('។')
+    text = [text_normalization.text_normalize(t) for t in text]
+    return text
 
 
 @app.route('/', methods=['GET'])
@@ -36,9 +31,12 @@ def add_text_post():
     if file and file.filename.endswith('.txt'):
         # Read the content of the text file
         file_content = file.read().decode('utf-8')
-
-        # Process the file content (you can add your logic here)
-        # For now, just print the content
+        if not os.path.exists('upload'):
+            os.mkdir('upload')
+        if not os.path.exists('upload/raw'):
+            os.mkdir('upload/raw')
+            
+        open('upload/raw/' + file.filename, 'w', encoding='UTF-8').write(file_content)
         return jsonify({'text': from_txt(file_content)})
 
         # Save the file to a folder (you may want to check for secure filename)

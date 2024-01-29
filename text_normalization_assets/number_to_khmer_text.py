@@ -80,6 +80,3 @@ def kh_num_to_num(number):
         else:
             return ''
     return int(new_number)
-
-    
-print(kh_num_to_num('0១១33២២33១១'))
