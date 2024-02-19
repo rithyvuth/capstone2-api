@@ -14,7 +14,11 @@ app = Flask(__name__)
 
 def from_txt(text_file):
     # text = open(text_file, 'r', encoding='UTF-8').read()
-    text = text_file.split('។')
+    text = text_file.replace('។', ' ')
+    text = khmernltk.word_tokenize(text)
+    # connect text in every 20 words
+    text = [''.join(text[i:i+20]) for i in range(0, len(text), 20)]
+
     text = [text_normalization.text_normalize(t) for t in text if t != None or t != '']
     return text
 
