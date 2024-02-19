@@ -82,7 +82,7 @@ def set_free():
     return jsonify({'status': 'ok'})
 
 @app.route('/saved_text', methods=['POST'])
-def saved_text(id):
+def saved_text():
     id = request.form['id']
     wav_name = request.form['name']
     my_db.update_status(id, 'saved', wav_name)
