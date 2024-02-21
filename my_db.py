@@ -108,3 +108,36 @@ def get_text_by_user_id(id):
     id = result[0]
     update_status(id, 'busy')
     return result
+
+# get id of the first 200 free status texts
+def get_free_texts_id(n_text = 220):
+    cusor = conn.cursor()
+    sql = "SELECT id FROM texts WHERE status = 'free' and user_id IS NULL ORDER BY id ASC LIMIT %s"
+    cusor.execute(sql, (n_text))
+    result = cusor.fetchall()
+    cusor.close()
+    # return as list of ids 1, 2, 3, 4, ...
+    return [x[0] for x in result]
+
+def assign_text_to_user(user_id):
+    cusor = conn.cursor()
+    count_user_text_left = len(get_texts_by_user_id(user_id))
+    if 220 - count_user_text_left <= 0:
+        return None
+    free_text = get_free_texts_id(220 - count_user_text_left)
+    if len(free_text) == 0:
+        return None
+    sql = "UPDATE texts SET user_id = %s WHERE id = %s"
+    for id in free_text:
+        cusor.execute(sql, (user_id, id))
+    conn.commit()
+    cusor.close()
+    return cusor.lastrowid
+
+def add_user(name):
+    cusor = conn.cursor()
+    sql = "INSERT INTO users (name) VALUES (%s)"
+    cusor.execute(sql, (name))
+    conn.commit()
+    cusor.close()
+    return cusor.lastrowid

@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect
 import my_db
 import khmernltk
 import text_normalization
@@ -67,6 +67,23 @@ def text_normalize_post():
     text = text_normalization.text_normalize(text)
     return jsonify({'text': text})
 
+@app.route('/add_user', methods=['GET'])
+def add_user():
+    users = my_db.get_users()
+
+    return render_template('add_user.html', users=users)
+
+@app.route('/add_user', methods=['POST'])
+def add_user_post():
+    name = request.form['name']
+    my_db.add_user(name)
+    return render_template('add_user.html', message='ការបញ្ចូលបានជោគជ័យ', status='primary')
+
+@app.route('/assign_text/<user_id>', methods=['GET'])
+def assign_text(user_id):
+    my_db.assign_text_to_user(user_id)
+    return redirect('/get_texts_by_user/' + user_id)
+
 
 # START API
 @app.route('/get_text', methods=['GET'])
@@ -111,6 +128,13 @@ def get_text_by_user(user_id):
     id = data[0]
     text = data[1]
     return jsonify({'id': id, 'text': text})
+
+
+@app.route('/get_free_texts', methods=['GET'])
+def get_free_text():
+    data = my_db.get_220_free_texts_id()
+    return jsonify({'data': data})
+
 
 
 if __name__ == '__main__':
