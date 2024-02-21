@@ -77,7 +77,8 @@ def add_user():
 def add_user_post():
     name = request.form['name']
     my_db.add_user(name)
-    return render_template('add_user.html', message='ការបញ្ចូលបានជោគជ័យ', status='primary')
+    users = my_db.get_users()
+    return render_template('add_user.html',users = users, message='ការបញ្ចូលបានជោគជ័យ', status='primary')
 
 @app.route('/assign_text/<user_id>', methods=['GET'])
 def assign_text(user_id):
