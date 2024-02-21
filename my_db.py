@@ -79,3 +79,32 @@ def test_get_text():
     cusor.close()
     
     return result
+
+
+def get_users():
+    cusor = conn.cursor()
+    sql = "SELECT * FROM users"
+    cusor.execute(sql)
+    result = cusor.fetchall()
+    cusor.close()
+    return result
+
+def get_texts_by_user_id(id):
+    cusor = conn.cursor()
+    sql = "SELECT id, text FROM texts WHERE user_id = %s and status = 'free'"
+    cusor.execute(sql, (id))
+    result = cusor.fetchall()
+    cusor.close()
+    return result
+
+def get_text_by_user_id(id):
+    cusor = conn.cursor()
+    sql = "SELECT id, text FROM texts WHERE user_id = %s and status = 'free' ORDER BY id ASC LIMIT 1"
+    cusor.execute(sql, (id))
+    result = cusor.fetchone()
+    cusor.close()
+    if result is None:
+        return [None, None, None]
+    id = result[0]
+    update_status(id, 'busy')
+    return result

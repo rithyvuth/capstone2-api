@@ -93,11 +93,25 @@ def get_all_texts():
     data = my_db.get_all_texts()
     return jsonify({'data': data})
 
+@app.route('/get_users', methods=['GET'])
+def get_user():
+    user = my_db.get_users()
+    return jsonify({'user': user})
 
-@app.route('/test_get_text', methods=['GET'])
-def test_get_text():
-    
-    return jsonify({'text': my_db.test_get_text()[1], 'id': my_db.test_get_text()[0]})
+@app.route('/get_texts_by_user/<user_id>', methods=['GET'])
+def get_texts_by_user(user_id):
+    data = my_db.get_texts_by_user_id(user_id)
+    return jsonify({'data': data})
+
+
+@app.route('/get_text_by_user/<user_id>', methods=['GET'])
+def get_text_by_user(user_id):
+    data = my_db.get_text_by_user_id(user_id)
+    # return jsonify({'data': data})
+    id = data[0]
+    text = data[1]
+    return jsonify({'id': id, 'text': text})
+
 
 if __name__ == '__main__':
    app.run()
