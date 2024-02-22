@@ -1,3 +1,4 @@
+import re
 def number_to_khmer_text(number):
     """Given a number, convert it to text
 
@@ -88,3 +89,54 @@ def have_khmer_number(text):
         if num in khmer_units:
             return True
     return False
+
+def convert_format(number):
+    number = str(number)
+    number = re.sub(r'[,\s]', '', number)
+    # if in format \d{1,3}(\s?\d{3}?)? then remove comma and space
+    return number
+
+def after_dot_to_khmer_text(number):
+    tmp_num = number
+    text = ''
+    for i in range(len(tmp_num)):
+        if number[i] == '0' or number[i] == 0:
+            text += 'សូន្យ'
+            number = number[1:]
+        else:
+            break
+    text += numtokhtext(int(number))
+    return text
+def zero_after_dot(number):
+    number = str(number)
+    text = ''
+    for i in range(len(number)):
+        text += 'សូន្យ'
+
+    return text
+
+# def numdottokhtext(number):
+#     number = str(number)
+#     if '.' in number:
+#         number = number.split('.')
+#         print(number)
+#         return numtokhtext(number[0]) + 'ចុច' + after_dot_to_khmer_text(number[1])
+#     else:
+#         return numtokhtext(number)
+    
+# def number_with_dot_to_khmer_text(number):
+#     """Given a number with dot, convert it to text
+
+#     Args:
+#         number : The number to be converted
+
+#     Returns:
+#         text : the text after conversion  
+
+#     """
+#     number = kh_num_to_num(number)
+#     # number = convert_format(number)
+#     number = numdottokhtext(number)
+#     return number
+
+# print(number_with_dot_to_khmer_text('25.11'))

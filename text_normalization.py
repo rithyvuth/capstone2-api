@@ -3,7 +3,7 @@ import re
 import unicodedata
 import khmernltk
 
-from text_normalization_assets.number_to_khmer_text import number_to_khmer_text, have_khmer_number
+from text_normalization_assets.number_to_khmer_text import number_to_khmer_text, have_khmer_number, after_dot_to_khmer_text, zero_after_dot
 from text_normalization_assets.english_to_khmer import english_to_khmer
 from text_normalization_assets.norm_config import norm_config
 
@@ -21,6 +21,14 @@ def text_normalize(text):
     """
 
     # text = khmernltk.word_tokenize(text)
+    #handle number
+    text = str(text)
+    text = re.sub(r'\d{1,3}(?:,\s?\d{3}?)?', lambda x: number_to_khmer_text(x.group()), text)
+    text = re.sub(r'\d{1,3}(?:\s\d{3}?)', lambda x: number_to_khmer_text(x.group()), text)
+    text = re.sub(r'\.(0?)(\d+)', lambda x:  ''.join([zero_after_dot(x.group(2)) if x.group(1) == '0' else '', after_dot_to_khmer_text(x.group(2))]), text)
+    text = re.sub(r'\.', 'ចុច', text)
+    text = re.sub(r'\d{1,2}', lambda x: number_to_khmer_text(x.group()), text)
+    text = re.sub(r'%', 'ភាគរយ', text)
 
     config = norm_config["*"]
 
