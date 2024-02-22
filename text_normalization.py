@@ -23,6 +23,7 @@ def text_normalize(text):
     # text = khmernltk.word_tokenize(text)
     #handle number
     text = str(text)
+    text = re.sub(r'\d+', lambda x: number_to_khmer_text(x.group()), text)
     text = re.sub(r'\d{1,3}(?:,\s?\d{3}?)?', lambda x: number_to_khmer_text(x.group()), text)
     text = re.sub(r'\d{1,3}(?:\s\d{3}?)', lambda x: number_to_khmer_text(x.group()), text)
     text = re.sub(r'\.(0?)(\d+)', lambda x:  ''.join([zero_after_dot(x.group(2)) if x.group(1) == '0' else '', after_dot_to_khmer_text(x.group(2))]), text)
