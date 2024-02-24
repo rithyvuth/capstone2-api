@@ -4,11 +4,13 @@ import my_db
 import khmernltk
 import text_normalization
 import os
+from flask_cors import CORS
 
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 # text = open('text.txt', 'r', encoding='UTF-8').read()
 

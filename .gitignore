@@ -2,3 +2,4 @@
 api.wsgi
 .env
 upload/*
+myenv/*
