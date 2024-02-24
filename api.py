@@ -119,7 +119,10 @@ def get_user():
 @app.route('/get_texts_by_user/<user_id>', methods=['GET'])
 def get_texts_by_user(user_id):
     data = my_db.get_texts_by_user_id(user_id)
-    return jsonify({'data': data})
+    url = request.base_url
+    start = request.args.get('start', 1)
+    limit = request.args.get('limit', 20)
+    return jsonify(get_paginated_list(data, url, start, limit))
 
 
 @app.route('/get_text_by_user/<user_id>', methods=['GET'])
@@ -131,10 +134,36 @@ def get_text_by_user(user_id):
     return jsonify({'id': id, 'text': text})
 
 
-@app.route('/get_free_texts', methods=['GET'])
-def get_free_text():
-    data = my_db.get_220_free_texts_id()
-    return jsonify({'data': data})
+
+def get_paginated_list(data, url, start = 1, limit =20):
+    start = int(start)
+    limit = int(limit)
+    count = len(data)
+    if count < start:
+        return jsonify({'error': 'No data'})
+    
+    obj = {
+        'start': start,
+        'limit': limit,
+        'count': count
+    }
+
+    if start == 1:
+        obj['previous'] = ''
+    else:
+        start_copy = max(1, start - limit)
+        limit_copy = start - 1
+        obj['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+
+    if start + limit > count:
+        obj['next'] = ''
+    else:
+        start_copy = start + limit
+        obj['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+
+    obj['data'] = data[(start - 1):(start - 1 + limit)]
+    return obj
+  
 
 
 
