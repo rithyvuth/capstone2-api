@@ -141,3 +141,24 @@ def add_user(name):
     conn.commit()
     cusor.close()
     return cusor.lastrowid
+
+def update_text(id, newText):
+    cusor = conn.cursor()
+    sql = "UPDATE texts SET text = %s WHERE id = %s"
+    cusor.execute(sql, (newText, id))
+    conn.commit()
+    cusor.close()
+    return cusor.lastrowid
+from text_normalization import text_normalize
+def normalize_text():
+    cusor = conn.cursor()
+    sql = "SELECT id, text FROM texts WHERE status = 'free'"
+    cusor.execute(sql)
+    result = cusor.fetchall()
+    for id, text in result:
+        normalized_text = text_normalize(text)
+        update_text(id, normalized_text)
+    cusor.close()
+    return cusor.lastrowid
+
+# normalize_text()
