@@ -1,11 +1,10 @@
 import json
 import re
-import unicodedata
+import string
 import khmernltk
 
-from text_normalization_assets.number_to_khmer_text import number_to_khmer_text, have_khmer_number, after_dot_to_khmer_text, zero_after_dot
+from text_normalization_assets.number_to_khmer_text import number_to_khmer_text, kh_num_to_num, number_with_dot_to_khmer_text
 from text_normalization_assets.english_to_khmer import english_to_khmer
-from text_normalization_assets.norm_config import norm_config
 
 
 def text_normalize(text):
@@ -19,81 +18,71 @@ def text_normalize(text):
         normalized_text : the string after all normalization  
 
     """
+    khmer_unicode = r'\u1780-\u17F9'
+    khmer_use_text_unicode = r'\u1780-\u17d3\u17dd'
+    khmer_num_unicode = r'\u17E0-\u17E9'
+
 
     # text = khmernltk.word_tokenize(text)
     #handle number
     text = str(text)
-    text = re.sub(r'\d+', lambda x: number_to_khmer_text(x.group()), text)
-    text = re.sub(r'\d{1,3}(?:,\s?\d{3}?)?', lambda x: number_to_khmer_text(x.group()), text)
-    text = re.sub(r'\d{1,3}(?:\s\d{3}?)', lambda x: number_to_khmer_text(x.group()), text)
-    text = re.sub(r'\.(0?)(\d+)', lambda x:  ''.join([zero_after_dot(x.group(2)) if x.group(1) == '0' else '', after_dot_to_khmer_text(x.group(2))]), text)
-    text = re.sub(r'\.', 'ចុច', text)
+    text = re.sub(r'[' + khmer_num_unicode + ']+', lambda x: kh_num_to_num(x.group()), text)
+
+    text = re.sub(r'\d+\.\d+', lambda x: number_with_dot_to_khmer_text(x.group()), text)
+
+    text = re.sub(r'\d{1,3}(?:,\s?\d{3}?){0,}', lambda x: number_to_khmer_text(x.group()), text)
+    text = re.sub(r'\d{1,3}(?:\s\d{3}?){0,}', lambda x: number_to_khmer_text(x.group()), text)
+
     text = re.sub(r'\d{1,2}', lambda x: number_to_khmer_text(x.group()), text)
+
+    text = re.sub(r'\d+', lambda x: number_to_khmer_text(x.group()), text)
     
     text = re.sub(r'%', 'ភាគរយ', text)
+    text = re.sub(r'\u17db', 'រៀល', text)
+    text = re.sub(r'\$', 'ដុល្លា', text)
 
-    config = norm_config["*"]
+    #remove links
+    text = re.sub(r'http\S+', '', text)
 
-    for field in ["lower_case", "punc_set","del_set", "mapping", "digit_set", "unicode_norm"]:
-        if field not in config:
-            config[field] = norm_config["*"][field]
+    #remove email
+    text = re.sub(r'\S+@[a-zA-Z]+(?:\.[a-zA-Z]+)+', '', text)
+
+    #handle english
+    text = re.sub(r'[A-Za-z]{5,}', '', text)
+    text = re.sub(r'[A-Za-z]{1,5}', lambda x: english_to_khmer(x.group()), text)
+
+    #remove emoji
+    emoji_pattern = re.compile("["
+                            u"\U0001F600-\U0001F64F"  # emoticons
+                            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                            u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                            u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                            u"\U00002702-\U000027B0"
+                            u"\U000024C2-\U0001F251"
+                            "]+", flags=re.UNICODE)
+    text = emoji_pattern.sub(r'', text)
+
+    #handle punctuations
+    punct = string.punctuation
+    text = re.sub(r'['+punct+']', '', text)
+
+    #remove extra spaces
+    text = re.sub(r'\s+', '', text)
+
+    #handdle ៗ
+    text = khmernltk.word_tokenize(text)
+    tmp_words = text
+    i = 0
+    for word in tmp_words:
+        if word == 'ៗ' and i > 0:
+            text[i] = text[i-1]
+        i += 1
+    text = ''.join(text)
+
+    #remove anything that not in khmer_use_text_unicode
+    text = re.sub(r'[^'+khmer_use_text_unicode+']', '', text)
+
+    return text
 
 
-    # text = unicodedata.normalize(config["unicode_norm"], text)
-
-
-    # brackets
-    # always text inside brackets with numbers in them. Usually corresponds to "(Sam 23:17)"
-    text = re.sub(r"\([^\)]*\d[^\)]*\)", " ", text)
-
-    # Apply mappings
-
-    for old, new in config["mapping"].items():
-        text = re.sub(old, new, text)
-
-    # Replace punctutations with nothings
-
-    punct_pattern = r"[" + config["punc_set"]
-
-    punct_pattern += "]"
-
-    normalized_text = re.sub(punct_pattern, "", text)
-
-    # remove characters in delete list
-
-    delete_patten = r"[" + config["del_set"] + "]"
-
-    normalized_text = re.sub(delete_patten, "", normalized_text)
-
-    
-
-    if config["rm_diacritics"]:
-        from unidecode import unidecode
-        normalized_text = unidecode(normalized_text)
-
-    # Remove spaces
-    normalized_text = re.sub(r"\s+", "", normalized_text).strip()
-    
-    normalized_text = khmernltk.word_tokenize(normalized_text)
-    for text in normalized_text:
-        if text.isdigit():
-            normalized_text[normalized_text.index(text)] = number_to_khmer_text(text)
-        elif text == 'ៗ':
-            normalized_text[normalized_text.index(text)] = normalized_text[normalized_text.index(text) - 1]
-        elif text.isalpha():
-            normalized_text[normalized_text.index(text)] = english_to_khmer(text)
-        elif have_khmer_number(text):
-            tmp = ''
-            for letter in text:
-                if have_khmer_number(letter):
-                    tmp += number_to_khmer_text(letter)
-                else:
-                    tmp += letter
-            normalized_text[normalized_text.index(text)] = tmp
-                    
-        elif text == '':
-            continue
-    
-    normalized_text = ''.join(normalized_text)
-
-    return normalized_text
+print(text_normalize('thar@gmail.com១-12_៣២១ឈ្មោះទាវឧត្តមអាយុដប់ប្រាំបីឆ្នាំមុខរបរសិស្សទីបួនៗ-ឈ្មោះជុំ'))

@@ -2,6 +2,8 @@ import pandas as pd
 import os
 def english_to_khmer(text):
     text = str(text)
+    if len(text) > 5:
+        return ''
     result = ''
     for letter in text:
         result += engtokh(letter)

@@ -23,8 +23,11 @@ def numtokhtext(number):
     khmer_hundred_thousands = ['មួយសែន', 'ពីរសែន', 'បីសែន', 'បួនសែន', 'ប្រាំសែន', 'ប្រាំមួយសែន', 'ប្រាំពីរសែន', 'ប្រាំបីសែន', 'ប្រាំបួនសែន']
     khmer_millions = ['មួយលាន', 'ពីរលាន', 'បីលាន', 'បួនលាន', 'ប្រាំលាន', 'ប្រាំមួយលាន', 'ប្រាំពីរលាន', 'ប្រាំបីលាន', 'ប្រាំបួនលាន']
     text = ''
-    number = kh_num_to_num(number)
+    if number is None:
+        return ''
+    
     length = len(str(number))
+    number = int(number)
     if length <= 9:
         while number > 0:
             if number >= 100000000:
@@ -80,8 +83,8 @@ def kh_num_to_num(number):
         elif num in number_units:
             new_number += num
         else:
-            return ''
-    return int(new_number)
+            return None
+    return new_number
 
 def have_khmer_number(text):
     khmer_units = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩']
@@ -99,8 +102,9 @@ def convert_format(number):
 def after_dot_to_khmer_text(number):
     tmp_num = number
     text = ''
+    print(range(len(tmp_num)))
     for i in range(len(tmp_num)):
-        if number[i] == '0' or number[i] == 0:
+        if tmp_num[i] == '0' or tmp_num[i] == 0:
             text += 'សូន្យ'
             number = number[1:]
         else:
@@ -115,28 +119,27 @@ def zero_after_dot(number):
 
     return text
 
-# def numdottokhtext(number):
-#     number = str(number)
-#     if '.' in number:
-#         number = number.split('.')
-#         print(number)
-#         return numtokhtext(number[0]) + 'ចុច' + after_dot_to_khmer_text(number[1])
-#     else:
-#         return numtokhtext(number)
+def numdottokhtext(number):
+    number = str(number)
+    if '.' in number:
+        number = number.split('.')
+        print(number)
+        return numtokhtext(number[0]) + 'ចុច' + after_dot_to_khmer_text(number[1])
+    else:
+        return numtokhtext(number)
     
-# def number_with_dot_to_khmer_text(number):
-#     """Given a number with dot, convert it to text
+def number_with_dot_to_khmer_text(number):
+    """Given a number with dot, convert it to text
 
-#     Args:
-#         number : The number to be converted
+    Args:
+        number : The number to be converted
 
-#     Returns:
-#         text : the text after conversion  
+    Returns:
+        text : the text after conversion  
 
-#     """
-#     number = kh_num_to_num(number)
-#     # number = convert_format(number)
-#     number = numdottokhtext(number)
-#     return number
+    """
+    # number = convert_format(number)
+    number = numdottokhtext(number)
+    return number
 
 # print(number_with_dot_to_khmer_text('25.11'))
