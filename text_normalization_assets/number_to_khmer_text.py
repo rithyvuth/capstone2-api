@@ -93,16 +93,16 @@ def have_khmer_number(text):
             return True
     return False
 
-def convert_format(number):
+def convert_num_format(number):
     number = str(number)
     number = re.sub(r'[,\s]', '', number)
-    # if in format \d{1,3}(\s?\d{3}?)? then remove comma and space
+
     return number
 
 def after_dot_to_khmer_text(number):
     tmp_num = number
     text = ''
-    print(range(len(tmp_num)))
+    # print(range(len(tmp_num)))
     for i in range(len(tmp_num)):
         if tmp_num[i] == '0' or tmp_num[i] == 0:
             text += 'សូន្យ'
@@ -123,7 +123,7 @@ def numdottokhtext(number):
     number = str(number)
     if '.' in number:
         number = number.split('.')
-        print(number)
+        # print(number)
         return numtokhtext(number[0]) + 'ចុច' + after_dot_to_khmer_text(number[1])
     else:
         return numtokhtext(number)
@@ -138,8 +138,8 @@ def number_with_dot_to_khmer_text(number):
         text : the text after conversion  
 
     """
-    # number = convert_format(number)
+
     number = numdottokhtext(number)
     return number
 
-# print(number_with_dot_to_khmer_text('25.11'))
+# print(convert_num_format('10, 000'))

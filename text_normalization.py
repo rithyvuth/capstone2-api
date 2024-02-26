@@ -3,7 +3,7 @@ import re
 import string
 import khmernltk
 
-from text_normalization_assets.number_to_khmer_text import number_to_khmer_text, kh_num_to_num, number_with_dot_to_khmer_text
+from text_normalization_assets.number_to_khmer_text import number_to_khmer_text, kh_num_to_num, number_with_dot_to_khmer_text, convert_num_format
 from text_normalization_assets.english_to_khmer import english_to_khmer
 
 
@@ -30,13 +30,11 @@ def text_normalize(text):
 
     text = re.sub(r'\d+\.\d+', lambda x: number_with_dot_to_khmer_text(x.group()), text)
 
-    text = re.sub(r'\d{1,3}(?:,\s?\d{3}?){0,}', lambda x: number_to_khmer_text(x.group()), text)
-    text = re.sub(r'\d{1,3}(?:\s\d{3}?){0,}', lambda x: number_to_khmer_text(x.group()), text)
-
-    text = re.sub(r'\d{1,2}', lambda x: number_to_khmer_text(x.group()), text)
-
-    text = re.sub(r'\d+', lambda x: number_to_khmer_text(x.group()), text)
+    text = re.sub(r'\d{1,3}(?:,\s?\d{3}?){0,}', lambda x: convert_num_format(x.group()), text)
+    text = re.sub(r'\d{1,3}(?:\s\d{3}?){0,}', lambda x: convert_num_format(x.group()), text)
     
+    text = re.sub(r'\d+', lambda x: number_to_khmer_text(x.group()), text)
+
     text = re.sub(r'%', 'ភាគរយ', text)
     text = re.sub(r'\u17db', 'រៀល', text)
     text = re.sub(r'\$', 'ដុល្លា', text)
@@ -83,6 +81,3 @@ def text_normalize(text):
     text = re.sub(r'[^'+khmer_use_text_unicode+']', '', text)
 
     return text
-
-
-print(text_normalize('thar@gmail.com១-12_៣២១ឈ្មោះទាវឧត្តមអាយុដប់ប្រាំបីឆ្នាំមុខរបរសិស្សទីបួនៗ-ឈ្មោះជុំ'))
