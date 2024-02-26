@@ -170,4 +170,4 @@ def get_paginated_list(data, url, start = 1, limit =20):
 
 
 if __name__ == '__main__':
-   app.run()
+   app.run(threaded=True)
