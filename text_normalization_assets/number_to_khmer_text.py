@@ -27,6 +27,8 @@ def numtokhtext(number):
         return ''
     
     length = len(str(number))
+    if number == '':
+        return text
     number = int(number)
     if length <= 9:
         while number > 0:
@@ -109,6 +111,8 @@ def after_dot_to_khmer_text(number):
             number = number[1:]
         else:
             break
+    if number == '':
+        return text
     text += numtokhtext(int(number))
     return text
 def zero_after_dot(number):
