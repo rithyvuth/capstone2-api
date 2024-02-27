@@ -135,6 +135,12 @@ def get_text_by_user(user_id):
     text = data[1]
     return jsonify({'id': id, 'text': text})
 
+@app.route('/skip_text', methods=['POST'])
+def update_text_status():
+    id = request.form['id']
+    my_db.update_status(id, 'skip')
+    return jsonify({'status': 'ok'})
+
 
 
 def get_paginated_list(data, url, start = 1, limit =20):

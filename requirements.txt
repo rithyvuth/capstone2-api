@@ -10,3 +10,4 @@ pymysql
 khmer-nltk
 pandas
 python-dotenv
+dbutils
