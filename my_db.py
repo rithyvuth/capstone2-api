@@ -58,7 +58,7 @@ def insert(text, filename=None):
 
 def get_text():
     cusor = conn.cursor()
-    sql = "SELECT id, text, status FROM texts WHERE status = 'free' ORDER BY id ASC LIMIT 1"
+    sql = "SELECT id, text, status FROM texts WHERE status = 'free' AND user_id IS NULL ORDER BY id ASC LIMIT 1"
     cusor.execute(sql)
     result = cusor.fetchone()
     cusor.close()
