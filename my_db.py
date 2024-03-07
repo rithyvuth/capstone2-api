@@ -183,11 +183,10 @@ def normalize_text():
     cusor.execute(sql)
     result = cusor.fetchall()
     for id, text in result:
-        normalized_text = text_normalize(text)
+        normalized_text = text_normalize(text, text_token_by_space=True)
         update_text(id, normalized_text)
     cusor.close()
     
     return cusor.lastrowid
 
-
-# normalize_text()
+#normalize_text()

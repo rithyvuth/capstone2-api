@@ -7,7 +7,7 @@ from text_normalization_assets.number_to_khmer_text import number_to_khmer_text,
 from text_normalization_assets.english_to_khmer import english_to_khmer
 
 
-def text_normalize(text):
+def text_normalize(text, text_token_by_space = False):
 
     """Given a text, normalize it by changing to lower case, removing punctuations, removing words that only contain digits and removing extra spaces
 
@@ -75,9 +75,12 @@ def text_normalize(text):
         if word == 'ៗ' and i > 0:
             text[i] = text[i-1]
         i += 1
-    text = ''.join(text)
+    if text_token_by_space:
+        text = ' '.join(text)
+    else:
+        text = ''.join(text)
 
     #remove anything that not in khmer_use_text_unicode
-    text = re.sub(r'[^'+khmer_use_text_unicode+']', '', text)
+    text = re.sub(r'[^'+khmer_use_text_unicode+'\s]', '', text)
 
     return text
