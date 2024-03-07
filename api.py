@@ -116,7 +116,12 @@ def get_all_texts():
 @app.route('/get_users', methods=['GET'])
 def get_user():
     user = my_db.get_users()
-    return jsonify({'user': user})
+    url = request.base_url
+    start = request.args.get('start')
+    limit = request.args.get('limit')
+    if start == None or limit == None:
+        return jsonify({'user': user})
+    return jsonify(get_paginated_list(user, url, start, limit))
 
 @app.route('/get_texts_by_user/<user_id>', methods=['GET'])
 def get_texts_by_user(user_id):
