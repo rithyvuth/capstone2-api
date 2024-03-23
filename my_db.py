@@ -112,6 +112,8 @@ def get_texts_by_user_id(id):
     cusor.execute(sql, (id))
     result = cusor.fetchall()
     cusor.close()
+    if result is None:
+        return []
     
     return result
 
