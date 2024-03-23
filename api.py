@@ -205,6 +205,8 @@ def get_texts_by_user(user_id):
     """
     # Retrieve texts from the database based on the user ID
     data = my_db.get_texts_by_user_id(user_id)
+    if data == None:
+        return jsonify({'data': None, 'error': 'No data'})
 
     # Get the base URL of the request
     url = request.base_url

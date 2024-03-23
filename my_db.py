@@ -7,7 +7,7 @@ load_dotenv()
 
 db_host = os.getenv("DB_HOST", 'localhost')
 db_user = os.getenv("DB_USER", 'root')
-db_password = os.getenv("DB_PASSWORD", 'root')
+db_password = os.getenv("DB_PASSWORD", 'password')
 db_database = os.getenv("DB_DATABASE", 'tts_db')
 # conn = pymysql.connect(
 #     host=db_host,
@@ -112,9 +112,8 @@ def get_texts_by_user_id(id):
     cusor.execute(sql, (id))
     result = cusor.fetchall()
     cusor.close()
-    if result is None:
-        return []
-    
+    if len(result) == 0:
+        return None
     return result
 
 def get_text_by_user_id(id):
